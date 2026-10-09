@@ -1,55 +1,146 @@
-# S Chat — Hosting guide
+# S Chat – Real-Time Messaging Application
 
-This repository contains `frontend/` (React + Vite) and `backend/` (Express + Socket.IO). Recommended hosting: Vercel for the frontend, Render for the persistent Node/Socket.IO backend, and MongoDB Atlas for the database.
+S Chat is a full-stack real-time messaging web application designed to provide a smooth and interactive communication experience. The application supports private conversations, group chats, real-time messaging, file sharing, and user account management.
 
-## 1. Push to GitHub
+## 🚀 Features
 
-Keep both folders in the same repository. Do not commit `.env` files, passwords, JWT secrets, `node_modules`, or uploaded user files. The backend `.gitignore` excludes `backend/uploads/*`; the source ZIP has been cleaned of previously uploaded runtime files.
+- User registration and login with JWT authentication
+- Secure password hashing using bcrypt
+- Real-time messaging using Socket.IO
+- Private conversations and group chats
+- Online/offline user presence and last-seen information
+- Typing indicators
+- Message delivery and read receipts
+- Unread message counts and notification sounds
+- Emoji picker
+- File sharing, including images, videos, and documents
+- User profile photo management
+- Account settings and password changes
+- Light and dark themes
+- Responsive user interface
 
-## 2. Configure MongoDB Atlas
+## 🛠️ Tech Stack
 
-Create/choose a database user and database, then copy the Atlas connection string into Render as `MONGO_URI`. Add the Render service's outbound IPs to the Atlas Network Access list if available. `0.0.0.0/0` permits access from anywhere and should only be used temporarily if you understand the security implications.
+**Frontend**
+- React
+- Vite
+- JavaScript
+- CSS
 
-## 3. Deploy the backend to Render
+**Backend**
+- Node.js
+- Express.js
+- Socket.IO
+- JWT Authentication
+- bcrypt
 
-Use the included `render.yaml` blueprint, or create a Web Service from the GitHub repository with Root Directory `backend`, Build Command `npm install`, and Start Command `npm start`. Add these environment variables in Render:
+**Database**
+- MongoDB Atlas
+- Mongoose
 
-- `MONGO_URI`: your private Atlas connection string
-- `JWT_SECRET`: a long random secret, at least 32 characters
-- `JWT_EXPIRES_IN`: `7d` (optional)
-- `CLIENT_URL`: exact Vercel origin, e.g. `https://your-project.vercel.app` (no path). For preview domains, add each origin comma-separated if you need them.
-- `NODE_ENV`: `production`
+**Tools and Deployment**
+- Git and GitHub
+- Postman
+- Vercel (frontend hosting)
+- Render (backend hosting)
 
-After deployment, test `https://YOUR-RENDER-SERVICE.onrender.com/api/health`. It should return HTTP 200 and `database: connected`.
+## 📂 Project Structure
 
-## 4. Deploy the frontend to Vercel
+```text
+S-Chat/
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vercel.json
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── package.json
+│   └── server.js
+├── .gitignore
+└── README.md
+```
 
-Import the same GitHub repository. Set Root Directory to `frontend`, Framework Preset to Vite, Build Command to `npm run build`, and Output Directory to `dist`. Add environment variables:
+*Note: The exact folders and files may vary depending on the current project version.*
 
-- `VITE_API_URL=https://YOUR-RENDER-SERVICE.onrender.com/api`
-- `VITE_SOCKET_URL=https://YOUR-RENDER-SERVICE.onrender.com`
+## ⚙️ Local Installation
 
-Replace the example hostname with the actual Render URL. Redeploy after adding or changing environment variables. `frontend/vercel.json` enables SPA route fallback.
+### 1. Clone the repository
 
-## 5. Update backend CORS
+```bash
+git clone https://github.com/YOUR-USERNAME/s-chat.git
+cd s-chat
+```
 
-Once Vercel provides the real production domain, set Render's `CLIENT_URL` to that exact origin and redeploy the backend. The value is the origin only: `https://your-project.vercel.app`, not a URL ending in `/dashboard`.
+### 2. Install backend dependencies
 
-## 6. File upload persistence — important
+```bash
+cd backend
+npm install
+```
 
-The current upload implementation writes files to `backend/uploads`. This works locally, but ordinary ephemeral hosting filesystems can lose uploaded files on redeploy/restart. For production, configure a persistent disk mounted at the backend's uploads directory (where supported by your hosting plan), or migrate uploads to durable object storage such as Cloudinary or Amazon S3. Do not assume local disk uploads are durable on a free ephemeral service.
+Configure the backend environment variables in a local `.env` file according to the backend configuration.
 
-## 7. Local development
+### 3. Install frontend dependencies
 
-Backend: copy `backend/.env.example` to `backend/.env`, fill in real private values, then run `npm install` and `npm run dev` inside `backend/`. Frontend: run `npm install` and `npm run dev` inside `frontend/`. With no Vite variables set, the frontend defaults to `http://localhost:5000` for local API and Socket.IO.
+Open a separate terminal:
 
-## 8. Final smoke test
+```bash
+cd frontend
+npm install
+```
 
-- Register and log in with two test accounts.
-- Send messages in both directions and verify read/delivered states.
-- Test groups, online status, typing, unread counts, and notification sound.
-- Upload and open attachments; test profile images if used.
-- Refresh a nested route such as `/dashboard`.
-- Verify browser console/network tab has no CORS, mixed-content, or failed Socket.IO requests.
+Create a frontend `.env` file with the appropriate local API and Socket.IO URLs.
 
-Never paste real MongoDB credentials or `JWT_SECRET` into public repositories or chats. If any secret has already been exposed, rotate it.
+### 4. Run the application
+
+Start the backend using its configured start script:
+
+```bash
+cd backend
+npm start
+```
+
+Start the frontend in a separate terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the local URL displayed by Vite in your browser.
+
+## 🌐 Deployment
+
+The planned deployment architecture is:
+
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Database:** MongoDB Atlas
+
+Configure the required environment variables and production URLs in the hosting dashboards before deployment.
+
+## 🔐 Security Notes
+
+- Never commit `.env` files or secret keys to GitHub.
+- Store production credentials in the hosting provider's environment variables.
+- Use strong database credentials and appropriate MongoDB Atlas network access rules.
+- Configure CORS to allow only the intended frontend origins.
+
+## 🎯 Project Objective
+
+The objective of S Chat is to develop a full-stack messaging application while gaining practical experience in frontend development, backend API development, database integration, authentication, real-time communication, and cloud deployment.
+
+## 👨‍💻 Author
+
+**Soorjayan Varatharajan**
+
+Computer Engineering Undergraduate  
+University of Jaffna
+
+## 📄 License
+
+Add a license if you intend to distribute this project under specific reuse terms.
